@@ -1,15 +1,13 @@
 {
   "name": "gestor-licencias",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0",
-    "sqlite3": "^5.1.7"
+    "express": "^5.1.0"
   }
 }
+
