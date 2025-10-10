@@ -1,96 +1,181 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import {
-  Gauge,
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
+import {
+  LayoutDashboard,
   Users,
-  FileText,
-  MessageSquare,
-  Calendar,
-  List,
-  Mail,
-  BarChart2,
+  Car,
   Settings,
-  UserCircle2,
+  LogOut,
+  Menu,
+  X,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import LoginPage from "./LoginPage"; // ✅ Tu login personalizado
 
-// Importar vistas
-import Dashboard from "./views/Dashboard.jsx";
+/* ========== Dashboard Principal ========== */
+function Dashboard() {
+  return (
+    <div className="p-6 text-gray-800">
+      <h2 className="text-3xl font-bold mb-4">Panel Principal</h2>
+      <p className="text-gray-600">
+        Bienvenido al CRM de ConfiAutos. Aquí podrás gestionar clientes,
+        vehículos y configuraciones internas.
+      </p>
+    </div>
+  );
+}
 
-const Clientes = () => <div className="p-6">👥 Gestión de clientes</div>;
-const Licencias = () => <div className="p-6">📄 Gestión de licencias y refrendaciones</div>;
-const Chat = () => <div className="p-6">💬 Centro de comunicación</div>;
-const Calendario = () => <div className="p-6">📅 Agenda y actividades</div>;
-const Lista = () => <div className="p-6">📋 Lista y Organización</div>;
-const Correo = () => <div className="p-6">📧 Bandeja de correo</div>;
-const Reportes = () => <div className="p-6">📈 Estadísticas y reportes</div>;
-const Configuracion = () => <div className="p-6">⚙️ Configuración del sistema</div>;
-const Perfil = () => <div className="p-6">👤 Perfil de usuario</div>;
+/* ========== Gestión de Clientes ========== */
+function Clientes() {
+  return (
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-2 text-gray-800">Clientes</h2>
+      <p className="text-gray-600">Lista de clientes registrados.</p>
+    </div>
+  );
+}
 
-export default function ConfiautosCRM() {
-  const [isOpen, setIsOpen] = useState(true);
+/* ========== Gestión de Vehículos ========== */
+function Vehiculos() {
+  return (
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-2 text-gray-800">Vehículos</h2>
+      <p className="text-gray-600">Control de inventario vehicular.</p>
+    </div>
+  );
+}
 
-  const menuItems = [
-    { name: "Dashboard", icon: <Gauge size={20} />, path: "/" },
-    { name: "Clientes", icon: <Users size={20} />, path: "/clientes" },
-    { name: "Licencias", icon: <FileText size={20} />, path: "/licencias" },
-    { name: "Chat", icon: <MessageSquare size={20} />, path: "/chat" },
-    { name: "Calendario", icon: <Calendar size={20} />, path: "/calendario" },
-    { name: "Lista", icon: <List size={20} />, path: "/lista" },
-    { name: "Correo", icon: <Mail size={20} />, path: "/correo" },
-    { name: "Reportes", icon: <BarChart2 size={20} />, path: "/reportes" },
-    { name: "Configuración", icon: <Settings size={20} />, path: "/configuracion" },
-    { name: "Perfil", icon: <UserCircle2 size={20} />, path: "/perfil" },
-  ];
+/* ========== Configuración ========== */
+function Configuracion() {
+  return (
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-2 text-gray-800">Configuración</h2>
+      <p className="text-gray-600">Opciones de personalización del sistema.</p>
+    </div>
+  );
+}
+
+/* ========== Sidebar ========== */
+function Sidebar({ onLogout, toggleSidebar, isSidebarOpen }) {
+  return (
+    <div
+      className={`${
+        isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+      } md:translate-x-0 fixed md:static z-50 bg-[#0c0f2d] text-white w-64 h-full p-6 transition-transform duration-300 ease-in-out`}
+    >
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-xl font-bold text-yellow-400">ConfiAutos CRM</h2>
+        <button onClick={toggleSidebar} className="md:hidden">
+          <X size={22} />
+        </button>
+      </div>
+
+      <nav className="space-y-3">
+        <Link
+          to="/"
+          className="flex items-center gap-3 p-2 rounded-lg hover:bg-yellow-500 hover:text-gray-900 transition"
+        >
+          <LayoutDashboard size={20} /> Dashboard
+        </Link>
+        <Link
+          to="/clientes"
+          className="flex items-center gap-3 p-2 rounded-lg hover:bg-yellow-500 hover:text-gray-900 transition"
+        >
+          <Users size={20} /> Clientes
+        </Link>
+        <Link
+          to="/vehiculos"
+          className="flex items-center gap-3 p-2 rounded-lg hover:bg-yellow-500 hover:text-gray-900 transition"
+        >
+          <Car size={20} /> Vehículos
+        </Link>
+        <Link
+          to="/configuracion"
+          className="flex items-center gap-3 p-2 rounded-lg hover:bg-yellow-500 hover:text-gray-900 transition"
+        >
+          <Settings size={20} /> Configuración
+        </Link>
+      </nav>
+
+      <button
+        onClick={onLogout}
+        className="flex items-center gap-2 bg-yellow-500 text-gray-900 px-4 py-2 mt-10 rounded-lg hover:bg-yellow-400 transition w-full"
+      >
+        <LogOut size={18} /> Cerrar sesión
+      </button>
+    </div>
+  );
+}
+
+/* ========== Layout principal ========== */
+function MainLayout({ onLogout }) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <Router>
-      <div className="flex h-screen bg-gray-50">
-        {/* Sidebar */}
-        <motion.aside
-          animate={{ width: isOpen ? 240 : 80 }}
-          className="bg-[#0c0f2d] text-white flex flex-col p-3 transition-all duration-300 shadow-xl"
-        >
-          <div className="flex items-center justify-between mb-6">
-            {isOpen && <h1 className="text-lg font-bold tracking-wide">ConfiAutos CRM</h1>}
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-300 hover:text-white"
-            >
-              ☰
-            </button>
-          </div>
-
-          <nav className="flex-1 space-y-2">
-            {menuItems.map((item, i) => (
-              <Link
-                key={i}
-                to={item.path}
-                className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#1a2150] transition"
-              >
-                {item.icon}
-                {isOpen && <span>{item.name}</span>}
-              </Link>
-            ))}
-          </nav>
-        </motion.aside>
-
-        {/* Contenido principal */}
-        <main className="flex-1 overflow-y-auto">
+    <div className="flex min-h-screen bg-gray-50">
+      <Sidebar
+        onLogout={onLogout}
+        toggleSidebar={toggleSidebar}
+        isSidebarOpen={isSidebarOpen}
+      />
+      <div className="flex-1">
+        <header className="flex items-center justify-between bg-white shadow-md p-4">
+          <button
+            className="md:hidden text-gray-700"
+            onClick={toggleSidebar}
+          >
+            <Menu size={24} />
+          </button>
+          <h1 className="text-xl font-semibold text-gray-800">
+            Sistema de Gestión ConfiAutos
+          </h1>
+        </header>
+        <main className="p-4">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/clientes" element={<Clientes />} />
-            <Route path="/licencias" element={<Licencias />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/calendario" element={<Calendario />} />
-            <Route path="/lista" element={<Lista />} />
-            <Route path="/correo" element={<Correo />} />
-            <Route path="/reportes" element={<Reportes />} />
+            <Route path="/vehiculos" element={<Vehiculos />} />
             <Route path="/configuracion" element={<Configuracion />} />
-            <Route path="/perfil" element={<Perfil />} />
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
       </div>
+    </div>
+  );
+}
+
+/* ========== App principal con Login ========== */
+export default function ConfiAutosCRMFull() {
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("confia_session");
+    if (stored) setSession(JSON.parse(stored));
+  }, []);
+
+  const handleLogin = (userData) => {
+    setSession(userData);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("confia_session");
+    setSession(null);
+  };
+
+  return (
+    <Router>
+      {!session ? (
+        <LoginPage onLogin={handleLogin} /> // ✅ Usa tu login personalizado
+      ) : (
+        <MainLayout onLogout={handleLogout} />
+      )}
     </Router>
   );
 }
