@@ -16,6 +16,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import LoginPage from "./LoginPage"; // ✅ Tu login personalizado
 
 /* ========== Dashboard Principal ========== */
 function Dashboard() {
@@ -178,4 +179,5 @@ export default function ConfiAutosCRMFull() {
     </Router>
   );
 }
+
 
